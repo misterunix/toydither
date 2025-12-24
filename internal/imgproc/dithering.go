@@ -322,10 +322,10 @@ func DitherRandom(imgIn *image.RGBA) *image.RGBA {
 
 }
 
-// DitherSierra1 performs a Sierra 1 dithering algorithm on the input image.
+// DitherSierra3 performs a Sierra-3 dithering algorithm on the input image.
 //
 // imgIn is passed as a pointer for speed, but is not modified.
-func DitherSierra1(imgIn *image.RGBA) *image.RGBA {
+func DitherSierra3(imgIn *image.RGBA) *image.RGBA {
 
 	// use draw to create, copy the input image to a new image
 	// and then modify that image in place
@@ -385,6 +385,9 @@ func DitherSierra1(imgIn *image.RGBA) *image.RGBA {
 //
 //
 
+// DitherSierra2 performs a Sierra-2 dithering algorithm on the input image.
+//
+// imgIn is passed as a pointer for speed, but is not modified.
 func DitherSierra2(imgIn *image.RGBA) *image.RGBA {
 
 	imgMod := image.NewRGBA(imgIn.Bounds())
@@ -438,7 +441,10 @@ func DitherSierra2(imgIn *image.RGBA) *image.RGBA {
 //
 //
 
-func DitherSierra2_4a(imgIn *image.RGBA) *image.RGBA {
+// DitherSierraLite performs a Sierra-Lite dithering algorithm on the input image.
+//
+// imgIn is passed as a pointer for speed, but is not modified.
+func DitherSierraLite(imgIn *image.RGBA) *image.RGBA {
 
 	imgMod := image.NewRGBA(imgIn.Bounds())
 	draw.Draw(imgMod, imgMod.Bounds(), imgIn, imgIn.Bounds().Min, draw.Src)
