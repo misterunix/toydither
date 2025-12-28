@@ -16,7 +16,7 @@ func server() {
 	//        mux.HandleFunc("/css/", httpCSS)
 	//        mux.HandleFunc("/images/", httpImages)
 
-	http.ListenAndServe(":10001", mux)
+	http.ListenAndServe(":7777", mux)
 
 }
 
