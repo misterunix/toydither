@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"lzrimg/internal/imgproc"
 	"path"
 	"strings"
 )
@@ -12,11 +13,35 @@ func server() {
 
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("/images/", httpImages)
 	mux.HandleFunc("/", rootHandler)
 	//        mux.HandleFunc("/css/", httpCSS)
-	//        mux.HandleFunc("/images/", httpImages)
 
 	http.ListenAndServe(":7777", mux)
+
+}
+
+func httpImages(w http.ResponseWriter, r *http.Request) {
+
+	pathStr := path.Base(r.URL.Path)
+	log.Println("Request for:", pathStr)
+
+	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set("Cache-Control", "no-cache")
+
+	contents, err := imgproc.EncodeImageToPNG(srcImage)
+	if err != nil {
+
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+
+	n, err := w.Write(contents)
+	if err != nil {
+		log.Println("Error writing image response:", err)
+		return
+	}
+	log.Println("Wrote", n, "bytes")
 
 }
 
@@ -42,6 +67,11 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 		if strings.Contains(pathStr, "dropdown.css") {
 			w.Write(dropdownembed)
+			return
+		}
+
+		if strings.Contains(pathStr, "lzr.css") {
+			w.Write(lzrembed)
 			return
 		}
 	}

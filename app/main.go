@@ -3,7 +3,9 @@ package main
 import (
 	_ "embed"
 	"flag"
-	"lzrimg/imgproc"
+	"fmt"
+	"image"
+	"lzrimg/internal/imgproc"
 )
 
 //go:embed embeds/w3.css
@@ -24,11 +26,16 @@ var htmxembed []byte
 //go:embed embeds/formupload.html
 var formuploadembed []byte
 
+//go:embed embeds/lzr.css
+var lzrembed []byte
+
 var srcImageFilename string
 var dstImageFilename string
 
-func main() {
+var srcImage *image.RGBA
 
+func main() {
+	var err error
 	flag.StringVar(&srcImageFilename, "i", "", "Source Image")
 	flag.StringVar(&dstImageFilename, "o", "", "Destination Image")
 	flag.Parse()
@@ -39,6 +46,9 @@ func main() {
 	}
 
 	// load the image
-	srcImage := imgproc.LoadImageFromFile(srcImageFilename)
-
+	srcImage, err = imgproc.LoadImageFromFile(srcImageFilename)
+	if err != nil {
+		fmt.Println("Error loading source image:", err)
+	}
+	server()
 }
