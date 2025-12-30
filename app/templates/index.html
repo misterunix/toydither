@@ -171,7 +171,10 @@
             <div class="w3-container w3-blue">
                 <h3>🖼️ Preview</h3>
             </div>
-            <div class="w3-container w3-padding" id="result-area">
+            <div class="w3-container w3-padding" id="result-area" 
+                 hx-get="/result" 
+                 hx-trigger="every 2s" 
+                 hx-swap="innerHTML">
                 {{if .ImageLoaded}}
                 <img src="data:image/png;base64,{{.ImageData}}" class="w3-image" style="max-width:100%; height:auto;" id="result-img">
                 <div class="w3-margin-top">
