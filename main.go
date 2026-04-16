@@ -8,7 +8,7 @@ import (
 	"image/png"
 	"io"
 	"log"
-	"lzrimg/internal/imgproc"
+	"lzrimg/imgproc"
 	"net/http"
 	"strconv"
 
@@ -16,7 +16,7 @@ import (
 	"image"
 )
 
-//go:embed templates/*
+//go:embed templates/index.html
 var content embed.FS
 
 var (

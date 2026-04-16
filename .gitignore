@@ -1,4 +1,3 @@
-app/app
-app/bin/*
+bin/*
 
 !*.md
