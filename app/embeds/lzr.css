@@ -1,0 +1,8 @@
+.responsive-container {
+  width: 50%; /* Example: the div takes up half the page width */
+}
+
+.responsive-container img {
+  max-width: 100%; /* Ensures image doesn't exceed container width */
+  height: auto;    /* Maintains aspect ratio */
+}
