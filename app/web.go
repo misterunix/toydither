@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"image/png"
 	"io"
+	"log"
 	"lzrimg/internal/imgproc"
 	"net/http"
 	"strconv"
@@ -32,12 +33,13 @@ type PageData struct {
 	Height      int
 }
 
-func main() {
-	// Parse templates
+func webserver() {
+
 	tmpl := template.Must(template.ParseFS(content, "templates/*.html"))
 
 	// Main page
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("web /")
 		data := PageData{
 			ImageLoaded: currentImage != nil,
 			Filename:    currentFilename,
@@ -56,6 +58,7 @@ func main() {
 
 	// Upload image
 	http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("web /upload")
 		if r.Method != "POST" {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
@@ -93,6 +96,7 @@ func main() {
 
 	// Apply B&W conversion
 	http.HandleFunc("/apply-bw", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("web /apply-bw")
 		if currentImage == nil {
 			http.Error(w, "No image loaded", http.StatusBadRequest)
 			return
@@ -124,6 +128,7 @@ func main() {
 
 	// Apply dithering
 	http.HandleFunc("/apply-dither", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("web /apply-dither")
 		if processedImage == nil {
 			http.Error(w, "No image to dither", http.StatusBadRequest)
 			return
@@ -156,6 +161,7 @@ func main() {
 
 	// Process all
 	http.HandleFunc("/process-all", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("web /process-all")
 		if currentImage == nil {
 			http.Error(w, "No image loaded", http.StatusBadRequest)
 			return
@@ -204,6 +210,7 @@ func main() {
 
 	// Reset image
 	http.HandleFunc("/reset", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("web /reset")
 		if currentImage != nil {
 			processedImage = imgproc.ConvertToRGBA(currentImage)
 			sendImageResponse(w, processedImage)
@@ -212,6 +219,7 @@ func main() {
 
 	// Download processed image
 	http.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("web /download")
 		if processedImage == nil {
 			http.Error(w, "No processed image", http.StatusBadRequest)
 			return
@@ -223,8 +231,26 @@ func main() {
 		png.Encode(w, processedImage)
 	})
 
+	http.HandleFunc("/result", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("web /result")
+		if processedImage == nil {
+
+			http.Error(w, "No processed image", http.StatusBadRequest)
+			return
+		}
+		sendImageResponse(w, processedImage)
+		//fmt.Fprint(w, "Hello from /result")
+	})
+
 	fmt.Println("Server starting on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
+
+}
+
+func main() {
+
+	webserver()
+
 }
 
 func sendImageResponse(w http.ResponseWriter, img *image.RGBA) {
