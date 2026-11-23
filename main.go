@@ -116,6 +116,8 @@ func webserver() {
 			result = imgproc.BWLuminance(currentImage)
 		case "LuminanceGamma":
 			result = imgproc.BWLuminanceGamma(currentImage)
+		case "LuminanceGammaBT601":
+			result = imgproc.BWLuminanceGammaBT601(currentImage)
 		case "Simple":
 			result = imgproc.BWSimple(currentImage)
 		default:
@@ -184,6 +186,12 @@ func webserver() {
 			result = imgproc.BWLuminance(currentImage)
 		case "LuminanceGamma":
 			result = imgproc.BWLuminanceGamma(currentImage)
+		case "LuminanceGammaBT601":
+			result = imgproc.BWLuminanceGammaBT601(currentImage)
+		case "LuminanceGammaBT709":
+			result = imgproc.BWLuminanceGammaBT709(currentImage)
+		case "LuminanceGammaBT2020":
+			result = imgproc.BWLuminanceGammaBT2020(currentImage)
 		case "Simple":
 			result = imgproc.BWSimple(currentImage)
 		default:
