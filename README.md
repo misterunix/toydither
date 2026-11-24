@@ -1,3 +1,3 @@
-# lzrimg
+# toydither
 
-Image prcoessing for lazer engravers
+Renamed project to toydither.

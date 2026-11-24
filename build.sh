@@ -1,2 +1,2 @@
 #!/bin/bash
-go build -ldflags="-s -w" -o bin/lzrimg
+go build -ldflags="-s -w" -o bin/toydither
