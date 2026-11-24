@@ -118,6 +118,10 @@ func webserver() {
 			result = imgproc.BWLuminanceGamma(currentImage)
 		case "LuminanceGammaBT601":
 			result = imgproc.BWLuminanceGammaBT601(currentImage)
+		case "LuminanceGammaBT709":
+			result = imgproc.BWLuminanceGammaBT709(currentImage)
+		case "LuminanceGammaBT2020":
+			result = imgproc.BWLuminanceGammaBT2020(currentImage)
 		case "Simple":
 			result = imgproc.BWSimple(currentImage)
 		default:
@@ -147,6 +151,8 @@ func webserver() {
 		switch method {
 		case "Floyd-Steinberg":
 			result = imgproc.DitherFloydSteinberg(processedImage)
+		case "False Floyd-Steinberg":
+			result = imgproc.DitherFalseFloydSteinberg(processedImage)
 		case "Atkinson":
 			result = imgproc.DitherArkinson(processedImage)
 		case "Burkes":
@@ -203,6 +209,18 @@ func webserver() {
 			switch ditherMethod {
 			case "Floyd-Steinberg":
 				result = imgproc.DitherFloydSteinberg(result)
+			case "False Floyd-Steinberg":
+				result = imgproc.DitherFalseFloydSteinberg(result)
+			case "DitherJarvisJudiceNinke":
+				result = imgproc.DitherJarvisJudiceNinke(result)
+			case "Sierra3":
+				result = imgproc.DitherSierra3(result)
+			case "Sierra2":
+				result = imgproc.DitherSierra2(result)
+			case "SierraLite":
+				result = imgproc.DitherSierraLite(result)
+			case "Stucki":
+				result = imgproc.DitherStucki(result)
 			case "Atkinson":
 				result = imgproc.DitherArkinson(result)
 			case "Burkes":

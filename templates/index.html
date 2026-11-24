@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,9 +12,11 @@
             position: sticky;
             top: 20px;
         }
+
         .slider-container {
             margin: 15px 0;
         }
+
         .slider-value {
             display: inline-block;
             min-width: 60px;
@@ -21,205 +24,210 @@
         }
     </style>
 </head>
+
 <body class="w3-light-grey">
 
-<!-- Header -->
-<header class="w3-container w3-blue w3-padding">
-    <h1>🖼️ LZR Image Processor</h1>
-    <p>Black & White Conversion and Dithering Tool</p>
-</header>
+    <!-- Header -->
+    <header class="w3-container w3-blue w3-padding">
+        <h1>🖼️ LZR Image Processor</h1>
+        <p>Black & White Conversion and Dithering Tool</p>
+    </header>
 
-<div class="w3-row-padding w3-margin-top">
-    
-    <!-- Left Column - Controls -->
-    <div class="w3-col m4 l3">
-        <div class="control-panel">
-            
-            <!-- File Upload -->
-            <div class="w3-card w3-white w3-margin-bottom">
-                <div class="w3-container w3-blue">
-                    <h3>📁 File Operations</h3>
+    <div class="w3-row-padding w3-margin-top">
+
+        <!-- Left Column - Controls -->
+        <div class="w3-col m4 l3">
+            <div class="control-panel">
+
+                <!-- File Upload -->
+                <div class="w3-card w3-white w3-margin-bottom">
+                    <div class="w3-container w3-blue">
+                        <h3>📁 File Operations</h3>
+                    </div>
+                    <form class="w3-container w3-padding" hx-post="/upload" hx-encoding="multipart/form-data"
+                        hx-target="#result-area">
+                        <input type="file" name="image" accept="image/*" class="w3-input w3-border w3-margin-bottom"
+                            required>
+                        <button type="submit" class="w3-button w3-blue w3-block w3-margin-bottom">
+                            Upload Image
+                        </button>
+                    </form>
+                    {{if .ImageLoaded}}
+                    <div class="w3-container w3-padding-small">
+                        <p class="w3-small">📄 <strong>{{.Filename}}</strong></p>
+                        <p class="w3-small">📐 {{.Width}}x{{.Height}}px</p>
+                    </div>
+                    {{end}}
                 </div>
-                <form class="w3-container w3-padding" 
-                      hx-post="/upload" 
-                      hx-encoding="multipart/form-data"
-                      hx-target="#result-area">
-                    <input type="file" name="image" accept="image/*" class="w3-input w3-border w3-margin-bottom" required>
-                    <button type="submit" class="w3-button w3-blue w3-block w3-margin-bottom">
-                        Upload Image
-                    </button>
-                </form>
+
+                <!-- B&W Method -->
+                <div class="w3-card w3-white w3-margin-bottom">
+                    <div class="w3-container w3-teal">
+                        <h3>⚫⚪ B&W Method</h3>
+                    </div>
+                    <div class="w3-container w3-padding">
+                        <select id="bw-method" name="bw-method" class="w3-select w3-border">
+                            <option value="BT.601">BT.601</option>
+                            <option value="BT.709">BT.709</option>
+                            <option value="BT.2020">BT.2020</option>
+                            <option value="Luminance">Luminance</option>
+                            <option value="LuminanceGamma">Luminance + Gamma</option>
+                            <option value="LuminanceGammaBT601">Luminance + Gamma BT.601</option>
+                            <option value="LuminanceGammaBT709">Luminance + Gamma BT.709</option>
+                            <option value="LuminanceGammaBT2020">Luminance + Gamma BT.2020</option>
+                            <option value="Simple">Simple</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dithering Method -->
+                <div class="w3-card w3-white w3-margin-bottom">
+                    <div class="w3-container w3-indigo">
+                        <h3>🔲 Dithering</h3>
+                    </div>
+                    <div class="w3-container w3-padding">
+                        <select id="dither-method" name="dither-method" class="w3-select w3-border">
+                            <option value="None">None</option>
+                            <option value="Floyd-Steinberg" selected>Floyd-Steinberg</option>
+                            <option value="False Floyd-Steinberg">False Floyd-Steinberg</option>
+                            <option value="DitherJarvisJudiceNinke">Dither Jarvis, Judice, Ninke</option>
+                            <option value="Sierra3">Sierra 3</option>
+                            <option value="Sierra2">Sierra 2</option>
+                            <option value="Stucki">Stucki</option>
+                            <option value="SierraLite">Sierra Lite</option>
+                            <option value="Atkinson">Atkinson</option>
+                            <option value="Burkes">Burkes</option>
+                            <option value="Simple">Simple</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sliders -->
+                <div class="w3-card w3-white w3-margin-bottom">
+                    <div class="w3-container w3-orange">
+                        <h3>🎚️ Adjustments</h3>
+                    </div>
+                    <div class="w3-container w3-padding">
+                        <div class="slider-container">
+                            <label><strong>Brightness:</strong> <span class="slider-value"
+                                    id="brightness-val">0</span></label>
+                            <input type="range" class="w3-input" id="brightness" min="-100" max="100" value="0"
+                                oninput="document.getElementById('brightness-val').textContent=this.value">
+                        </div>
+
+                        <div class="slider-container">
+                            <label><strong>Contrast:</strong> <span class="slider-value"
+                                    id="contrast-val">1.0</span></label>
+                            <input type="range" class="w3-input" id="contrast" min="0.1" max="3.0" step="0.1"
+                                value="1.0" oninput="document.getElementById('contrast-val').textContent=this.value">
+                        </div>
+
+                        <div class="slider-container">
+                            <label><strong>Threshold:</strong> <span class="slider-value"
+                                    id="threshold-val">127</span></label>
+                            <input type="range" class="w3-input" id="threshold" min="0" max="255" value="127"
+                                oninput="document.getElementById('threshold-val').textContent=this.value">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="w3-card w3-white w3-margin-bottom">
+                    <div class="w3-container w3-green">
+                        <h3>⚡ Actions</h3>
+                    </div>
+                    <div class="w3-container w3-padding">
+                        <button class="w3-button w3-teal w3-block w3-margin-bottom" hx-post="/apply-bw"
+                            hx-include="[name='bw-method']" hx-target="#result-area">
+                            Apply B&W
+                        </button>
+
+                        <button class="w3-button w3-indigo w3-block w3-margin-bottom" hx-post="/apply-dither"
+                            hx-include="[name='dither-method']" hx-target="#result-area">
+                            Apply Dithering
+                        </button>
+
+                        <button class="w3-button w3-green w3-block w3-margin-bottom" hx-post="/process-all"
+                            hx-include="[name='bw-method'], [name='dither-method']" hx-target="#result-area">
+                            🚀 Process All
+                        </button>
+
+                        <button class="w3-button w3-grey w3-block w3-margin-bottom" hx-post="/reset"
+                            hx-target="#result-area">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Download -->
                 {{if .ImageLoaded}}
-                <div class="w3-container w3-padding-small">
-                    <p class="w3-small">📄 <strong>{{.Filename}}</strong></p>
-                    <p class="w3-small">📐 {{.Width}}x{{.Height}}px</p>
+                <div class="w3-card w3-white">
+                    <div class="w3-container w3-padding">
+                        <a href="/download" class="w3-button w3-blue w3-block" download>
+                            💾 Download Result
+                        </a>
+                    </div>
                 </div>
                 {{end}}
-            </div>
 
-            <!-- B&W Method -->
-            <div class="w3-card w3-white w3-margin-bottom">
-                <div class="w3-container w3-teal">
-                    <h3>⚫⚪ B&W Method</h3>
-                </div>
-                <div class="w3-container w3-padding">
-                    <select id="bw-method" name="bw-method" class="w3-select w3-border">
-                        <option value="BT.601">BT.601</option>
-                        <option value="BT.709">BT.709</option>
-                        <option value="BT.2020">BT.2020</option>
-                        <option value="Luminance">Luminance</option>
-                        <option value="LuminanceGamma">Luminance + Gamma</option>
-                        <option value="Simple">Simple</option>
-                    </select>
-                </div>
             </div>
+        </div>
 
-            <!-- Dithering Method -->
-            <div class="w3-card w3-white w3-margin-bottom">
-                <div class="w3-container w3-indigo">
-                    <h3>🔲 Dithering</h3>
-                </div>
-                <div class="w3-container w3-padding">
-                    <select id="dither-method" name="dither-method" class="w3-select w3-border">
-                        <option value="None">None</option>
-                        <option value="Floyd-Steinberg" selected>Floyd-Steinberg</option>
-                        <option value="Atkinson">Atkinson</option>
-                        <option value="Burkes">Burkes</option>
-                        <option value="Simple">Simple</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Sliders -->
-            <div class="w3-card w3-white w3-margin-bottom">
-                <div class="w3-container w3-orange">
-                    <h3>🎚️ Adjustments</h3>
-                </div>
-                <div class="w3-container w3-padding">
-                    <div class="slider-container">
-                        <label><strong>Brightness:</strong> <span class="slider-value" id="brightness-val">0</span></label>
-                        <input type="range" class="w3-input" id="brightness" min="-100" max="100" value="0" 
-                               oninput="document.getElementById('brightness-val').textContent=this.value">
-                    </div>
-                    
-                    <div class="slider-container">
-                        <label><strong>Contrast:</strong> <span class="slider-value" id="contrast-val">1.0</span></label>
-                        <input type="range" class="w3-input" id="contrast" min="0.1" max="3.0" step="0.1" value="1.0"
-                               oninput="document.getElementById('contrast-val').textContent=this.value">
-                    </div>
-                    
-                    <div class="slider-container">
-                        <label><strong>Threshold:</strong> <span class="slider-value" id="threshold-val">127</span></label>
-                        <input type="range" class="w3-input" id="threshold" min="0" max="255" value="127"
-                               oninput="document.getElementById('threshold-val').textContent=this.value">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="w3-card w3-white w3-margin-bottom">
-                <div class="w3-container w3-green">
-                    <h3>⚡ Actions</h3>
-                </div>
-                <div class="w3-container w3-padding">
-                    <button class="w3-button w3-teal w3-block w3-margin-bottom"
-                            hx-post="/apply-bw"
-                            hx-include="[name='bw-method']"
-                            hx-target="#result-area">
-                        Apply B&W
-                    </button>
-                    
-                    <button class="w3-button w3-indigo w3-block w3-margin-bottom"
-                            hx-post="/apply-dither"
-                            hx-include="[name='dither-method']"
-                            hx-target="#result-area">
-                        Apply Dithering
-                    </button>
-                    
-                    <button class="w3-button w3-green w3-block w3-margin-bottom"
-                            hx-post="/process-all"
-                            hx-include="[name='bw-method'], [name='dither-method']"
-                            hx-target="#result-area">
-                        🚀 Process All
-                    </button>
-                    
-                    <button class="w3-button w3-grey w3-block w3-margin-bottom"
-                            hx-post="/reset"
-                            hx-target="#result-area">
-                        Reset
-                    </button>
-                </div>
-            </div>
-
-            <!-- Download -->
-            {{if .ImageLoaded}}
+        <!-- Right Column - Image Display -->
+        <div class="w3-col m8 l9">
             <div class="w3-card w3-white">
+                <div class="w3-container w3-blue">
+                    <h3>🖼️ Preview</h3>
+                </div>
+                <div class="w3-container w3-padding" id="result-area" hx-get="/result" hx-trigger="every 2s"
+                    hx-swap="innerHTML">
+                    {{if .ImageLoaded}}
+                    <img src="data:image/png;base64,{{.ImageData}}" class="w3-image"
+                        style="max-width:100%; height:auto;" id="result-img">
+                    <div class="w3-margin-top">
+                        <p><strong>Dimensions:</strong> {{.Width}}x{{.Height}} pixels</p>
+                    </div>
+                    {{else}}
+                    <div class="w3-panel w3-pale-blue w3-border">
+                        <h3>👋 Welcome!</h3>
+                        <p>Upload an image to get started with black & white conversion and dithering.</p>
+                        <p><strong>Features:</strong></p>
+                        <ul>
+                            <li>Multiple B&W conversion methods (BT.601, BT.709, BT.2020, etc.)</li>
+                            <li>Various dithering algorithms (Floyd-Steinberg, Atkinson, etc.)</li>
+                            <li>Real-time preview</li>
+                            <li>Download processed images</li>
+                        </ul>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+
+            <!-- Info Panel -->
+            <div class="w3-card w3-white w3-margin-top">
+                <div class="w3-container w3-grey">
+                    <h4>ℹ️ Quick Guide</h4>
+                </div>
                 <div class="w3-container w3-padding">
-                    <a href="/download" class="w3-button w3-blue w3-block" download>
-                        💾 Download Result
-                    </a>
+                    <ol class="w3-small">
+                        <li><strong>Upload</strong> an image using the file input</li>
+                        <li><strong>Select</strong> your preferred B&W conversion method</li>
+                        <li><strong>Choose</strong> a dithering algorithm (or None)</li>
+                        <li><strong>Adjust</strong> sliders if needed (coming soon)</li>
+                        <li><strong>Click</strong> "Process All" to apply both operations</li>
+                        <li><strong>Download</strong> your processed image</li>
+                    </ol>
                 </div>
             </div>
-            {{end}}
-
         </div>
+
     </div>
 
-    <!-- Right Column - Image Display -->
-    <div class="w3-col m8 l9">
-        <div class="w3-card w3-white">
-            <div class="w3-container w3-blue">
-                <h3>🖼️ Preview</h3>
-            </div>
-            <div class="w3-container w3-padding" id="result-area" 
-                 hx-get="/result" 
-                 hx-trigger="every 2s" 
-                 hx-swap="innerHTML">
-                {{if .ImageLoaded}}
-                <img src="data:image/png;base64,{{.ImageData}}" class="w3-image" style="max-width:100%; height:auto;" id="result-img">
-                <div class="w3-margin-top">
-                    <p><strong>Dimensions:</strong> {{.Width}}x{{.Height}} pixels</p>
-                </div>
-                {{else}}
-                <div class="w3-panel w3-pale-blue w3-border">
-                    <h3>👋 Welcome!</h3>
-                    <p>Upload an image to get started with black & white conversion and dithering.</p>
-                    <p><strong>Features:</strong></p>
-                    <ul>
-                        <li>Multiple B&W conversion methods (BT.601, BT.709, BT.2020, etc.)</li>
-                        <li>Various dithering algorithms (Floyd-Steinberg, Atkinson, etc.)</li>
-                        <li>Real-time preview</li>
-                        <li>Download processed images</li>
-                    </ul>
-                </div>
-                {{end}}
-            </div>
-        </div>
-
-        <!-- Info Panel -->
-        <div class="w3-card w3-white w3-margin-top">
-            <div class="w3-container w3-grey">
-                <h4>ℹ️ Quick Guide</h4>
-            </div>
-            <div class="w3-container w3-padding">
-                <ol class="w3-small">
-                    <li><strong>Upload</strong> an image using the file input</li>
-                    <li><strong>Select</strong> your preferred B&W conversion method</li>
-                    <li><strong>Choose</strong> a dithering algorithm (or None)</li>
-                    <li><strong>Adjust</strong> sliders if needed (coming soon)</li>
-                    <li><strong>Click</strong> "Process All" to apply both operations</li>
-                    <li><strong>Download</strong> your processed image</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<!-- Footer -->
-<footer class="w3-container w3-blue w3-padding w3-margin-top">
-    <p class="w3-center">LZR Image Processor | Powered by Go, HTMX & W3.CSS</p>
-</footer>
+    <!-- Footer -->
+    <footer class="w3-container w3-blue w3-padding w3-margin-top">
+        <p class="w3-center">LZR Image Processor | Powered by Go, HTMX & W3.CSS</p>
+    </footer>
 
 </body>
+
 </html>
