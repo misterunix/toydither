@@ -19,6 +19,9 @@ import (
 //go:embed templates/index.html
 var content embed.FS
 
+//go:embed thelastdays10.jpg
+var thelastdays10 []byte
+
 var (
 	currentImage    *image.RGBA
 	processedImage  *image.RGBA
